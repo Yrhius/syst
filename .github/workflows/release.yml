@@ -1,0 +1,31 @@
+name: release.yml
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+
+    build-windows :
+        runs-on: windows-latest
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Build
+          run: gcc puissance.c -o puissance-windows.exe
+
+    build-linux :
+        runs-on: Ubuntu-latest
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Build
+          run: gcc puissance.c -o puissance-linux.bin
+
+    build-macos :
+        runs-on: macos-latest
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Build
+          run: gcc puissance.c -o puissance-macos
