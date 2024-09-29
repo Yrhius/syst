@@ -4,6 +4,10 @@ on:
     tags:
       - '*'
 
+permissions :
+  contents: write
+
+
 jobs:
 
     build-windows :
@@ -13,6 +17,11 @@ jobs:
           uses: actions/checkout@v4
         - name: Build
           run: gcc puissance.c -o puissance-windows.exe
+        - name: Upload
+          uses: actions/upload-artifact@master
+          with:
+            name: puissance-windows
+            path: ./puissance-windows.exe
 
     build-linux :
         runs-on: Ubuntu-latest
@@ -21,6 +30,11 @@ jobs:
           uses: actions/checkout@v4
         - name: Build
           run: gcc puissance.c -o puissance-linux.bin
+        - name: Upload
+          uses: actions/upload-artifact@master
+          with:
+            name: puissance-linux
+            path: ./puissance-linux.bin
 
     build-macos :
         runs-on: macos-latest
@@ -29,3 +43,33 @@ jobs:
           uses: actions/checkout@v4
         - name: Build
           run: gcc puissance.c -o puissance-macos
+        - name: Upload
+          uses: actions/upload-artifact@master
+          with:
+            name: puissance-macos
+            path: ./puissance-macos
+    
+    creation-release:
+      needs: [build-windows, build-linux, build-macos]
+      runs-on: ubuntu-latest
+      steps:
+        - name: Download puissance-windows artifact
+          uses: actions/download-artifact@master
+          with:
+            name: puissance-windows
+        - name: Download puissance-linux artifact
+          uses: actions/download-artifact@master
+          with:
+            name: puissance-linux
+        - name: Download puissance-macos artifact
+          uses: actions/download-artifact@master
+          with:
+            name: puissance-macos
+        - name: creation d'une release
+          uses: softprops/action-gh-release@v2
+          with:
+            files: |
+                puissance-windows
+                puissance-linux
+                puissance-macos
+            
